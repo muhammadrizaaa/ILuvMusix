@@ -17,8 +17,10 @@
             android:theme="@style/Theme.ILuvMusix">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data
+                    android:scheme="@string/app_name_lowercase"
+                    android:host="spotify-callback"/>
             </intent-filter>
         </activity>
     </application>
