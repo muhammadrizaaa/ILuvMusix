@@ -30,9 +30,10 @@ fun CustomTextButton(
     ) {
         if(isLoading){
             CircularProgressIndicator(
-                modifier = Modifier.size(4.dp),
-                color = colorResource(R.color.secondary),
-                trackColor = colorResource(R.color.white)
+                modifier = Modifier.size(16.dp),
+                strokeWidth = 2.dp,
+                color = colorResource(R.color.white),
+                trackColor = colorResource(R.color.main)
             )
         }
         else{

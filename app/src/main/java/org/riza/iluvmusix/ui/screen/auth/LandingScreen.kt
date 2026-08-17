@@ -1,11 +1,15 @@
 package org.riza.iluvmusix.ui.screen.auth
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,39 +41,51 @@ fun LandingScreen(
     val tokenStatus = viewModel.tokenStatus.collectAsState()
     val tokenErrMsg = viewModel.tokenErrMsg.collectAsState()
 
+
+
     Scaffold(
         containerColor = colorResource(R.color.white)
     ) { innerPadding->
-        Column(
+        Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.i_luv_musix_icon),
-                contentDescription = null,
-                modifier = Modifier.size(64.dp)
-            )
-            CustomTextButton(
-                containerColor = colorResource(R.color.main),
-                text = "Get Started",
-                isActive = tokenStatus.value != ApiStatus.LOADING,
-                isLoading = tokenStatus.value == ApiStatus.LOADING
+            contentAlignment = Alignment.Center
+        ){
+            Column(
+                modifier = Modifier.wrapContentHeight().fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                viewModel.getToken(dataStore)
-            }
-            LaunchedEffect(tokenStatus.value) {
-                if(tokenStatus.value == ApiStatus.SUCCESS){
-                    navHostController.navigate(Screen.HomeScreen.route)
-                }
-            }
-            if(tokenStatus.value == ApiStatus.ERR && tokenErrMsg.value != null){
-                Text(
-                    text = tokenErrMsg.value!!,
-                    color = colorResource(R.color.red),
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center
+                Icon(
+                    painter = painterResource(R.drawable.i_luv_musix_icon),
+                    tint = null,
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp)
                 )
+                CustomTextButton(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    text = "Get Started",
+                    isActive = tokenStatus.value != ApiStatus.LOADING,
+                    isLoading = tokenStatus.value == ApiStatus.LOADING
+                ) {
+                    viewModel.getToken(dataStore)
+                }
+                LaunchedEffect(tokenStatus.value) {
+                    if(tokenStatus.value == ApiStatus.SUCCESS){
+                        navHostController.navigate(Screen.HomeScreen.route){
+                            popUpTo(Screen.LandingScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
+                if(tokenStatus.value == ApiStatus.ERR && tokenErrMsg.value != null){
+                    Text(
+                        text = tokenErrMsg.value!!,
+                        color = colorResource(R.color.red),
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

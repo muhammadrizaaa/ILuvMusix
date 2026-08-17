@@ -9,9 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import org.riza.iluvmusix.R
 import org.riza.iluvmusix.datastore.AuthDataStore
+import org.riza.iluvmusix.ui.component.topbar.CustomTopBar
 
 @Composable
 fun HomeScreen(
@@ -20,9 +25,17 @@ fun HomeScreen(
     val context = LocalContext.current
     val dataStore = AuthDataStore(context)
     val token = dataStore.userIdFlow.collectAsState(null)
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            CustomTopBar(
+                titleText = stringResource(R.string.app_name),
+                titleIcon = painterResource(R.drawable.i_luv_musix_icon),
+                navIcon = null
+            )
+        }
+    ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
+            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp)
         ) {
             if(token.value != null){
                 Text(

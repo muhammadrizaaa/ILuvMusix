@@ -12,7 +12,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ILuvMusixTheme {
+            ILuvMusixTheme(
+                darkTheme = false,
+                dynamicColor = false
+            ) {
                 RootNav()
             }
         }
