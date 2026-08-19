@@ -6,14 +6,16 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.riza.iluvmusix.dataclass.response.auth.TokenResponse
+import org.riza.iluvmusix.dataclass.response.main.SearchResponse
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 const val BASE_URL = "https://accounts.spotify.com/"
 const val BASE_URL_1 = "https://api.spotify.com/v1/"
@@ -36,24 +38,44 @@ private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
-private val retrofit = Retrofit.Builder()
+private val authRetrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(BASE_URL)
     .client(client)
     .build()
 
-interface MainApiService {
+private val mainRetrofit = Retrofit.Builder()
+    .addConverterFactory(MoshiConverterFactory.create(moshi))
+    .baseUrl(BASE_URL_1)
+    .client(client)
+    .build()
+
+interface AuthApiService {
     @FormUrlEncoded
     @POST("api/token")
     suspend fun getToken(
         @Header("Authorization") authHeader: String = org.riza.iluvmusix.network.authHeader,
         @Field("grant_type") grantType: String = "client_credentials"
     ): Response<TokenResponse>
+
+}
+
+interface MainApiService{
+    @GET("search")
+    suspend fun getSearch(
+        @Header("Authorization") token: String,
+        @Query("q") q: String,
+        @Query("type") type: String = "album,artist,track"
+    ): Response<SearchResponse>
 }
 
 object MainApi{
-    val services: MainApiService by lazy {
-        retrofit.create(MainApiService::class.java)
+    val authServices: AuthApiService by lazy {
+        authRetrofit.create(AuthApiService::class.java)
+    }
+
+    val mainServices: MainApiService by lazy {
+        mainRetrofit.create(MainApiService::class.java)
     }
 }
 

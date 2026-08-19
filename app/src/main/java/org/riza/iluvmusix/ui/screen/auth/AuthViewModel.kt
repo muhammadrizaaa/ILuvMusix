@@ -25,7 +25,7 @@ class AuthViewModel: ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             tokenStatus.value = ApiStatus.LOADING
             try{
-                val result = MainApi.services.getToken()
+                val result = MainApi.authServices.getToken()
                 if(result.isSuccessful){
                     val token = result.body()
                     if(token != null){
