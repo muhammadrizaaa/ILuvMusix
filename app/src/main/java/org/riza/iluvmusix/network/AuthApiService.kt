@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.riza.iluvmusix.dataclass.response.auth.TokenResponse
 import org.riza.iluvmusix.dataclass.response.main.SearchResponse
+import org.riza.iluvmusix.dataclass.response.main.content.album.AlbumDetailDto
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -15,6 +16,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 const val BASE_URL = "https://accounts.spotify.com/"
@@ -67,6 +69,12 @@ interface MainApiService{
         @Query("q") q: String,
         @Query("type") type: String = "album,artist,track"
     ): Response<SearchResponse>
+
+    @GET("albums/{id}")
+    suspend fun getAlbumById(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<AlbumDetailDto>
 }
 
 object MainApi{

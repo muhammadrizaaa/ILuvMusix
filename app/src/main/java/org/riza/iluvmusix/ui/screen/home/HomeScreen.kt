@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import org.riza.iluvmusix.R
 import org.riza.iluvmusix.datastore.AuthDataStore
+import org.riza.iluvmusix.navigation.Screen
 import org.riza.iluvmusix.network.ApiStatus
 import org.riza.iluvmusix.ui.component.main.search.SearchResult
 import org.riza.iluvmusix.ui.component.state.err.ErrBox
@@ -78,14 +79,20 @@ fun HomeScreen(
                 }
             )
             when(searchResultStatus){
-                ApiStatus.LOADING -> LoadingBox()
+                ApiStatus.LOADING -> LoadingBox(
+                    modifier = Modifier.fillMaxSize()
+                )
                 ApiStatus.SUCCESS, ApiStatus.NONE -> {
                     SearchResult(
                         modifier = Modifier,
-                        data = searchResult
+                        data = searchResult,
+                        onAlbumCLick = {
+                            navHostController.navigate(Screen.AlbumDetailScreen.withId(it))
+                        }
                     )
                 }
                 ApiStatus.ERR -> ErrBox(
+                    modifier = Modifier.fillMaxSize(),
                     errMsg = searchResultErrMsg
                 )
             }

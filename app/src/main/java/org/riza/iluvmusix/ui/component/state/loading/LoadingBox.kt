@@ -25,7 +25,8 @@ fun LoadingBox(
         contentAlignment = Alignment.Center
     ){
         CircularProgressIndicator(
-            modifier = Modifier.size(size),
+            modifier = Modifier
+                .size(size),
             strokeWidth = strokeWidth,
             color = color,
             trackColor = trackColor

@@ -43,23 +43,23 @@ class HomeViewModel: ViewModel() {
                 else{
                     _searchResultErrMsg.value = "Err"
                     searchResultStatus.value = ApiStatus.ERR
+                }
             }
-        }
-        catch (e: Exception) {
-            Log.e("SEARCH_EXCEPTION", "Exception occurred", e)
+            catch (e: Exception) {
+                Log.e("SEARCH_EXCEPTION", "Exception occurred", e)
 
-            if (e is HttpException) {
-                val errorJson = e.response()?.errorBody()?.string()
-                Log.e("SEARCH_RESPONSE_ERR_RAW", errorJson ?: "No error body")
+                if (e is HttpException) {
+                    val errorJson = e.response()?.errorBody()?.string()
+                    Log.e("SEARCH_RESPONSE_ERR_RAW", errorJson ?: "No error body")
+                }
+
+                when (e) {
+                    is IOException -> _searchResultErrMsg.value = "conn_err"
+                    else -> _searchResultErrMsg.value = e.message ?: "Unknown error"
+                }
+
+                searchResultStatus.value = ApiStatus.NONE
             }
-
-            when (e) {
-                is IOException -> _searchResultErrMsg.value = "conn_err"
-                else -> _searchResultErrMsg.value = e.message ?: "Unknown error"
-            }
-
-            searchResultStatus.value = ApiStatus.NONE
-        }
         }
     }
 }

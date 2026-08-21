@@ -1,6 +1,7 @@
 package org.riza.iluvmusix.ui.component.main.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +41,8 @@ import org.riza.iluvmusix.dataclass.response.main.TrackDto
 @Composable
 fun SearchResult(
     modifier: Modifier = Modifier,
-    data: SearchResponse?
+    data: SearchResponse?,
+    onAlbumCLick: (id: String) -> Unit
 ){
     if(data != null){
         val artists = data.artists
@@ -69,7 +71,11 @@ fun SearchResult(
                     if(it.isNotEmpty()){
                         items(it){ data->
                             AlbumBox(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable(onClick = {onAlbumCLick(data.id)})
+                                ,
                                 data = data
                             )
                         }
@@ -197,7 +203,7 @@ fun AlbumBox(
     contentColor: Color = colorResource(R.color.white)
 ){
     val artist = data.artists?.joinToString(", ") { it.name }
-    val image = data.images?.first()
+    val image = data.images?.firstOrNull()
     Box(
         modifier = modifier
             .background(
@@ -268,7 +274,7 @@ fun ArtistBox(
     bgColor: Color = colorResource(R.color.main).copy(alpha = 0.8f),
     contentColor: Color = colorResource(R.color.white)
 ){
-    val image = data.images?.first()
+    val image = data.images?.firstOrNull()
     Box(
         modifier = modifier
             .background(
