@@ -42,7 +42,9 @@ import org.riza.iluvmusix.dataclass.response.main.TrackDto
 fun SearchResult(
     modifier: Modifier = Modifier,
     data: SearchResponse?,
-    onAlbumCLick: (id: String) -> Unit
+    onAlbumCLick: (id: String) -> Unit,
+    onTrackClick: (id: String) -> Unit,
+    onArtistClick: (id: String) -> Unit
 ){
     if(data != null){
         val artists = data.artists
@@ -61,7 +63,9 @@ fun SearchResult(
                     if(it.isNotEmpty()){
                         items(it){ data->
                             ArtistBox(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable(onClick = {onArtistClick(data.id)}),
                                 data = data
                             )
                         }
@@ -85,7 +89,9 @@ fun SearchResult(
                     if(it.isNotEmpty()){
                         items(it){ data->
                             TrackBox(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable(onClick = {onTrackClick(data.id)}),
                                 data = data
                             )
                         }

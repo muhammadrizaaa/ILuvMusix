@@ -88,12 +88,22 @@ fun HomeScreen(
                         data = searchResult,
                         onAlbumCLick = {
                             navHostController.navigate(Screen.AlbumDetailScreen.withId(it))
-                        }
+                        },
+                        onTrackClick = {
+                            navHostController.navigate(Screen.TrackDetailScreen.withId(it))
+                        },
+                        onArtistClick = {},
                     )
                 }
                 ApiStatus.ERR -> ErrBox(
                     modifier = Modifier.fillMaxSize(),
-                    errMsg = searchResultErrMsg
+                    errMsg = searchResultErrMsg,
+                    onRetry = {
+                        viewModel.getSearch(
+                            q = q,
+                            token = "Bearer $token"
+                        )
+                    }
                 )
             }
         }

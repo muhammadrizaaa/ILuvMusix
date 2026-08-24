@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import org.riza.iluvmusix.datastore.AuthDataStore
+import org.riza.iluvmusix.navigation.Screen
 import org.riza.iluvmusix.network.ApiStatus
 import org.riza.iluvmusix.ui.component.main.content.album.AlbumListTrackPart
 import org.riza.iluvmusix.ui.component.main.content.album.AlbumTitlePart
@@ -100,7 +101,10 @@ fun AlbumDetailScreen(
                             albumDto?.tracks?.items?.let {
                                 AlbumListTrackPart(
                                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                                    data = it
+                                    data = it,
+                                    onTrackClick = { id ->
+                                        navHostController.navigate(Screen.TrackDetailScreen.withId(id))
+                                    }
                                 )
                             }
                         }
@@ -117,8 +121,16 @@ fun AlbumDetailScreen(
                                     onCLick = { navHostController.navigateUp() }
                                 )
                                 ErrBox(
-                                    modifier = Modifier.fillMaxWidth().padding(64.dp),
-                                    errMsg = albumErrMsg
+                                    modifier = Modifier.fillMaxSize().padding(64.dp),
+                                    errMsg = albumErrMsg,
+                                    onRetry = {
+                                        if(albumId != null && token != null){
+                                            viewModel.getAlbumById(
+                                                id = albumId,
+                                                token = "Bearer $token"
+                                            )
+                                        }
+                                    }
                                 )
                             }
                         }

@@ -6,8 +6,12 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.riza.iluvmusix.dataclass.response.auth.TokenResponse
+import org.riza.iluvmusix.dataclass.response.main.ArtistDto
+import org.riza.iluvmusix.dataclass.response.main.PageResponse
 import org.riza.iluvmusix.dataclass.response.main.SearchResponse
 import org.riza.iluvmusix.dataclass.response.main.content.album.AlbumDetailDto
+import org.riza.iluvmusix.dataclass.response.main.content.album.SimpleAlbumDto
+import org.riza.iluvmusix.dataclass.response.main.content.track.TrackDetailDto
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -75,6 +79,24 @@ interface MainApiService{
         @Header("Authorization") token: String,
         @Path("id") id: String
     ): Response<AlbumDetailDto>
+
+    @GET("artists/{id}")
+    suspend fun getArtistById(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<ArtistDto>
+
+    @GET("artists/{id}/albums")
+    suspend fun getAlbumByArtist(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<PageResponse<SimpleAlbumDto>>
+
+    @GET("tracks/{id}")
+    suspend fun getTrackById(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<TrackDetailDto>
 }
 
 object MainApi{

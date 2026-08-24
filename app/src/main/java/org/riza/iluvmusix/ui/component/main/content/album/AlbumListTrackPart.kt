@@ -1,15 +1,18 @@
 package org.riza.iluvmusix.ui.component.main.content.album
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import org.riza.iluvmusix.R
@@ -19,7 +22,8 @@ import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
 @Composable
 fun AlbumListTrackPart(
     modifier: Modifier = Modifier,
-    data: List<AlbumTrackDto>
+    data: List<AlbumTrackDto>,
+    onTrackClick: (id: String) -> Unit
 ){
     Column(
         modifier = modifier,
@@ -29,7 +33,9 @@ fun AlbumListTrackPart(
         data.forEachIndexed { index, dto ->
             val artistName = dto.artists?.joinToString(",") { it.name }
             AlbumTrackItem(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable(onClick = {onTrackClick(dto.id)}),
                 title = dto.name,
                 artists = artistName?:"",
                 index = index+1,

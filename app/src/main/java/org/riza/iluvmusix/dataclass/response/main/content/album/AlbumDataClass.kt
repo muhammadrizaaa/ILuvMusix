@@ -38,3 +38,16 @@ data class ArtistDto(
     val id: String,
     val name: String
 )
+
+// 1. The DTO for the items inside the list
+@JsonClass(generateAdapter = true)
+data class SimpleAlbumDto(
+    val id: String,
+    val name: String,
+    @Json(name = "album_type") val albumType: String?,
+    @Json(name = "album_group") val albumGroup: String?, // Useful for sorting artist discographies (e.g., "appears_on", "single")
+    @Json(name = "release_date") val releaseDate: String?,
+    @Json(name = "total_tracks") val totalTracks: Int?,
+    val images: List<ImageDto>?,
+    val artists: List<ArtistDto>?
+)
