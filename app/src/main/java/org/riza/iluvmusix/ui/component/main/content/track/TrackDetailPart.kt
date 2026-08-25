@@ -1,5 +1,6 @@
 package org.riza.iluvmusix.ui.component.main.content.track
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,9 @@ fun TrackDetailPart(
     title: String?,
     isExplicit: Boolean?,
     durationMs: Long?,
-    artists: String?
+    artists: String?,
+    onArtistClick: () -> Unit,
+    onAlbumClick: (id: String, title: String) -> Unit,
 ){
     val cover = album?.images?.firstOrNull()?.url
     Box(
@@ -62,12 +65,18 @@ fun TrackDetailPart(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(onClick = {onAlbumClick(album?.id?:"", album?.name?:"")}),
                         text = title?: "Unknown",
                         style = MaterialTheme.typography.titleLarge.copy(
                             textAlign = TextAlign.Start
                         )
                     )
                     Text(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(onClick = {onArtistClick()}),
                         text = artists ?: "Unknown",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             textAlign = TextAlign.Start

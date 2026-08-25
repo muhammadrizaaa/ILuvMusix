@@ -92,7 +92,9 @@ fun HomeScreen(
                         onTrackClick = {
                             navHostController.navigate(Screen.TrackDetailScreen.withId(it))
                         },
-                        onArtistClick = {},
+                        onArtistClick = {
+                            navHostController.navigate(Screen.ArtistDetailScreen.withId(it))
+                        },
                     )
                 }
                 ApiStatus.ERR -> ErrBox(

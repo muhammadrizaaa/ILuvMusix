@@ -93,7 +93,10 @@ fun AlbumDetailScreen(
                                     artistsName = artist ?: "",
                                     isSaved = false,
                                     onSave = {},
-                                    onBack = {navHostController.navigateUp()}
+                                    onBack = { navHostController.navigateUp() },
+                                    onArtistClick = {
+                                        navHostController.navigate(Screen.ArtistDetailScreen.withId(it.id))
+                                    }
                                 )
                             }
                         }

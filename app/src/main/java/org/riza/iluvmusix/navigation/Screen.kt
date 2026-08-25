@@ -1,6 +1,7 @@
 package org.riza.iluvmusix.navigation
 
 import org.riza.iluvmusix.ui.screen.content.album.ALBUM_ID_KEY
+import org.riza.iluvmusix.ui.screen.content.artist.ARTIST_ID_KEY
 import org.riza.iluvmusix.ui.screen.content.track.TRACK_ID_KEY
 
 sealed class Screen(val route: String) {
@@ -14,5 +15,9 @@ sealed class Screen(val route: String) {
 
     data object TrackDetailScreen: Screen("track_detail_screen/{$TRACK_ID_KEY}"){
         fun withId(type: String) = "track_detail_screen/$type"
+    }
+
+    data object ArtistDetailScreen: Screen("artist_detail_screen/{$ARTIST_ID_KEY}"){
+        fun withId(type: String) = "artist_detail_screen/$type"
     }
 }

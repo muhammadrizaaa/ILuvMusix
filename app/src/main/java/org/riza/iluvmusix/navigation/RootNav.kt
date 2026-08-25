@@ -9,6 +9,8 @@ import androidx.navigation.navArgument
 import org.riza.iluvmusix.ui.screen.auth.LandingScreen
 import org.riza.iluvmusix.ui.screen.content.album.ALBUM_ID_KEY
 import org.riza.iluvmusix.ui.screen.content.album.AlbumDetailScreen
+import org.riza.iluvmusix.ui.screen.content.artist.ARTIST_ID_KEY
+import org.riza.iluvmusix.ui.screen.content.artist.ArtistDetailScreen
 import org.riza.iluvmusix.ui.screen.content.track.TRACK_ID_KEY
 import org.riza.iluvmusix.ui.screen.content.track.TrackDetailScreen
 import org.riza.iluvmusix.ui.screen.home.HomeScreen
@@ -51,6 +53,18 @@ fun RootNav(){
             TrackDetailScreen(
                 navHostController = navController,
                 id = it.arguments?.getString(TRACK_ID_KEY)
+            )
+        }
+
+        composable(
+            route = Screen.ArtistDetailScreen.route,
+            arguments = listOf(
+                navArgument(ARTIST_ID_KEY) { NavType.StringType }
+            )
+        ) {
+            ArtistDetailScreen(
+                navHostController = navController,
+                id = it.arguments?.getString(ARTIST_ID_KEY)
             )
         }
     }

@@ -89,7 +89,9 @@ interface MainApiService{
     @GET("artists/{id}/albums")
     suspend fun getAlbumByArtist(
         @Header("Authorization") token: String,
-        @Path("id") id: String
+        @Path("id") id: String,
+        @Query("include_groups") includeGroups: String = "album,single,compilation",
+        @Query("limit") limit: Int = 10,
     ): Response<PageResponse<SimpleAlbumDto>>
 
     @GET("tracks/{id}")

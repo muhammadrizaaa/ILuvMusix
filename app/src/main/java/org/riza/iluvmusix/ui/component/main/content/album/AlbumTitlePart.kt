@@ -51,6 +51,7 @@ fun AlbumTitlePart(
     imageUrl: String?,
     artistsName: String,
     isSaved: Boolean,
+    onArtistClick: () -> Unit,
     onSave: (Boolean) -> Unit,
     onBack: () -> Unit
 ) {
@@ -155,6 +156,9 @@ fun AlbumTitlePart(
                         )
                     )
                     Text(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(onClick = {onArtistClick()}),
                         text = artistsName,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             textAlign = TextAlign.Center

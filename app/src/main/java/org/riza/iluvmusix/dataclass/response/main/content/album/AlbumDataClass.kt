@@ -14,7 +14,7 @@ data class AlbumDetailDto(
     @Json(name = "release_date") val releaseDate: String?,
     @Json(name = "total_tracks") val totalTracks: Int?,
     val images: List<ImageDto>?,
-    val artists: List<ArtistDto>?,
+    val artists: List<SimpleArtistDto>?,
     val tracks: PageResponse<AlbumTrackDto>?,
     val label: String?
 )
@@ -29,12 +29,12 @@ data class AlbumTrackDto(
     @Json(name = "duration_ms") val durationMs: Long?,
     val explicit: Boolean?,
     @Json(name = "preview_url") val previewUrl: String?,
-    val artists: List<ArtistDto>?
+    val artists: List<SimpleArtistDto>?
 )
 
 // 4. Artist DTO
 @JsonClass(generateAdapter = true)
-data class ArtistDto(
+data class SimpleArtistDto(
     val id: String,
     val name: String
 )
@@ -49,5 +49,5 @@ data class SimpleAlbumDto(
     @Json(name = "release_date") val releaseDate: String?,
     @Json(name = "total_tracks") val totalTracks: Int?,
     val images: List<ImageDto>?,
-    val artists: List<ArtistDto>?
+    val artists: List<SimpleArtistDto>?
 )
