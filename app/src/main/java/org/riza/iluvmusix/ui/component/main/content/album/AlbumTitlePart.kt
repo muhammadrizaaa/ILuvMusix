@@ -1,6 +1,12 @@
 package org.riza.iluvmusix.ui.component.main.content.album
 
 import android.app.Activity
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,8 +60,33 @@ fun AlbumTitlePart(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
+
     val fallbackColor = colorResource(R.color.main)
     var glowColor by remember { mutableStateOf(fallbackColor) }
+    val infiniteTransition = rememberInfiniteTransition(label = "gradient_pulse")
+
+// Pulses smoothly back and forth between 0.7f and 1.0f over 3 seconds
+    val firstAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.7f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse // Plays forward, then backwards
+        ),
+        label = "firstAlpha"
+    )
+
+// Pulses between 0.3f and 0.6f over a slightly different duration (4 seconds)
+// to create an organic, unsynchronized feel
+    val secondAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 4000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "secondAlpha"
+    )
 
     val isLightColor = glowColor.luminance() > 0.5f
     val view = LocalView.current
@@ -88,8 +119,8 @@ fun AlbumTitlePart(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        glowColor.copy(alpha = 0.9f),
-                        glowColor.copy(alpha = 0.5f),
+                        glowColor.copy(alpha = firstAlpha),
+                        glowColor.copy(alpha = secondAlpha),
                         Color.Transparent
                     )
                 )
@@ -106,7 +137,7 @@ fun AlbumTitlePart(
         ) {
             Box(
                 modifier = Modifier
-                    .padding(top = 16.dp) // Adjusted padding since statusBarsPadding handles the system gap now
+                    .padding(top = 32.dp) // Adjusted padding since statusBarsPadding handles the system gap now
                     .size(200.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(color = fallbackColor)
