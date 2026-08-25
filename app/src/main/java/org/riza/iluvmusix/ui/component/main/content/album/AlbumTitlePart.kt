@@ -61,7 +61,7 @@ fun AlbumTitlePart(
 ) {
     val context = LocalContext.current
 
-    val fallbackColor = colorResource(R.color.main)
+    val fallbackColor = MaterialTheme.colorScheme.primary
     var glowColor by remember { mutableStateOf(fallbackColor) }
     val infiniteTransition = rememberInfiniteTransition(label = "gradient_pulse")
 
@@ -151,11 +151,12 @@ fun AlbumTitlePart(
             }
 
             Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(start = 24.dp),
+                    modifier = Modifier.padding(start = 8.dp).weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -185,10 +186,8 @@ fun AlbumTitlePart(
                         else R.drawable.outline_bookmark_24
                     ),
                     contentDescription = null,
-                    tint = colorResource(
-                        if (isSaved) R.color.main
-                        else R.color.black // Consider changing this to Color.White if you are using dark mode
-                    )
+                    tint = MaterialTheme.colorScheme.primary
+
                 )
             }
         }

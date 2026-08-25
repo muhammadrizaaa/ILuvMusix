@@ -13,9 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import org.riza.iluvmusix.R
 import org.riza.iluvmusix.dataclass.response.main.content.album.AlbumTrackDto
 import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
 
@@ -44,7 +42,7 @@ fun AlbumListTrackPart(
             )
             if(index != data.size-1){
                 HorizontalDivider(
-                    color = colorResource(R.color.main),
+                    color = MaterialTheme.colorScheme.primary,
                     thickness = 1.dp
                 )
             }
@@ -81,9 +79,7 @@ fun AlbumTrackItem(
             )
             Text(
                 text = artists,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = colorResource(R.color.black).copy(alpha = 0.75f)
-                )
+                style = MaterialTheme.typography.bodyMedium
             )
         }
         if(isExplicit == true){

@@ -68,7 +68,7 @@ fun DiscographyItem(
             .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = {onClick(data.id)})
             .background(
-                color = colorResource(R.color.black).copy(alpha = 0.15f)
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
             )
     ){
         Column(
@@ -105,9 +105,7 @@ fun DiscographyItem(
                     )
                     Text(
                         text = underText,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = colorResource(R.color.black).copy(alpha = 0.75f)
-                        )
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }

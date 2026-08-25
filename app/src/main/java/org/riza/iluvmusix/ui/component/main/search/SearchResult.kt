@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,10 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -107,10 +106,7 @@ fun SearchResult(
         ){
             Text(
                 text = "Search Somethin'",
-                fontWeight = FontWeight.W700,
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center,
-                color = colorResource(R.color.black)
+                style = MaterialTheme.typography.headlineMedium
             )
         }
     }
@@ -120,8 +116,8 @@ fun SearchResult(
 fun TrackBox(
     modifier: Modifier = Modifier,
     data: TrackDto,
-    bgColor: Color = colorResource(R.color.main).copy(alpha = 0.8f),
-    contentColor: Color = colorResource(R.color.white)
+    bgColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary
 ){
     val artist = data.artists?.joinToString(", ") { it.name }
     Box(
@@ -205,8 +201,8 @@ fun TrackBox(
 fun AlbumBox(
     modifier: Modifier = Modifier,
     data: AlbumDto,
-    bgColor: Color = colorResource(R.color.main).copy(alpha = 0.8f),
-    contentColor: Color = colorResource(R.color.white)
+    bgColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary
 ){
     val artist = data.artists?.joinToString(", ") { it.name }
     val image = data.images?.firstOrNull()
@@ -277,8 +273,8 @@ fun AlbumBox(
 fun ArtistBox(
     modifier: Modifier = Modifier,
     data: ArtistDto,
-    bgColor: Color = colorResource(R.color.main).copy(alpha = 0.8f),
-    contentColor: Color = colorResource(R.color.white)
+    bgColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary
 ){
     val image = data.images?.firstOrNull()
     Box(

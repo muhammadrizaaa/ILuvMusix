@@ -18,7 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,9 +42,7 @@ fun LandingScreen(
 
 
 
-    Scaffold(
-        containerColor = colorResource(R.color.white)
-    ) { innerPadding->
+    Scaffold { innerPadding->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             contentAlignment = Alignment.Center
@@ -81,7 +78,7 @@ fun LandingScreen(
                 if(tokenStatus.value == ApiStatus.ERR && tokenErrMsg.value != null){
                     Text(
                         text = tokenErrMsg.value!!,
-                        color = colorResource(R.color.red),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         textAlign = TextAlign.Center
                     )

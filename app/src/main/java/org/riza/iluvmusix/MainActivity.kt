@@ -13,7 +13,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ILuvMusixTheme(
-                darkTheme = false,
                 dynamicColor = false
             ) {
                 RootNav()

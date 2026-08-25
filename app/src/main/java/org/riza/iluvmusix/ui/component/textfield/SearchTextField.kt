@@ -15,11 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -40,6 +41,9 @@ fun SearchTextField(
                 onValChange(it)
             }
             },
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
+            color = LocalContentColor.current
+        ),
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.None,
@@ -53,7 +57,7 @@ fun SearchTextField(
                     .border(
                         BorderStroke(
                             width = 1.dp,
-                            color = colorResource(R.color.black)
+                            color = LocalContentColor.current
                         ),
                         shape = RoundedCornerShape(8.dp)
                     )
