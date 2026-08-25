@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.riza.iluvmusix.dataclass.response.main.content.track.TrackAlbumDto
-import org.riza.iluvmusix.helper.function.formatDuration
+import org.riza.iluvmusix.helper.formatDuration
 import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
 
 @Composable

@@ -37,12 +37,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
-import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import org.riza.iluvmusix.R
+import org.riza.iluvmusix.helper.rememberPaletteImageRequest
 import org.riza.iluvmusix.ui.component.main.content.util.BackIconButton
 
 @Composable
@@ -76,31 +74,12 @@ fun AlbumTitlePart(
         }
     }
 
-    val imageRequest = remember(imageUrl) {
-        ImageRequest.Builder(context)
-            .data(imageUrl)
-            .allowHardware(false)
-            .listener(
-                onSuccess = { _, result ->
-                    val bitmap = result.drawable.toBitmap()
-                    Palette.Builder(bitmap).generate { palette ->
-                        palette?.let { p ->
-                            val rgb = p.vibrantSwatch?.rgb
-                                ?: p.lightVibrantSwatch?.rgb
-                                ?: p.darkVibrantSwatch?.rgb
-                                ?: p.mutedSwatch?.rgb
-                                ?: p.dominantSwatch?.rgb
-
-                            if (rgb != null) {
-                                glowColor = Color(rgb)
-                            }
-                        }
-                    }
-                }
-            )
-            .build()
-    }
-
+    // The massive block is now just one clean line!
+    val imageRequest = rememberPaletteImageRequest(
+        imageUrl = imageUrl,
+        context = context,
+        onColorExtracted = { customColor -> glowColor = customColor }
+    )
     Box(
         modifier = Modifier
             .wrapContentHeight()

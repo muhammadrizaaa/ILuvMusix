@@ -1,4 +1,4 @@
-package org.riza.iluvmusix.helper.function
+package org.riza.iluvmusix.helper
 
 fun formatDuration(durationMs: Long?): String {
     if (durationMs == null || durationMs <= 0L) return "0 Seconds"
