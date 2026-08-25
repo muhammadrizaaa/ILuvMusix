@@ -60,7 +60,7 @@ class TrackDetailViewModel: ViewModel() {
                     else -> _trackDetailErrMsg.value = e.message ?: "Unknown error"
                 }
 
-                trackDetailStatus.value = ApiStatus.NONE
+                trackDetailStatus.value = ApiStatus.ERR
             }
         }
     }

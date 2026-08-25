@@ -60,7 +60,7 @@ class AlbumDetailViewModel: ViewModel() {
                     else -> _albumDetailErrMsg.value = e.message ?: "Unknown error"
                 }
 
-                albumDetailStatus.value = ApiStatus.NONE
+                albumDetailStatus.value = ApiStatus.ERR
             }
         }
     }

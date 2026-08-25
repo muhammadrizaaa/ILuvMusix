@@ -92,6 +92,7 @@ interface MainApiService{
         @Path("id") id: String,
         @Query("include_groups") includeGroups: String = "album,single,compilation",
         @Query("limit") limit: Int = 10,
+        @Query("offset") offset: Int
     ): Response<PageResponse<SimpleAlbumDto>>
 
     @GET("tracks/{id}")

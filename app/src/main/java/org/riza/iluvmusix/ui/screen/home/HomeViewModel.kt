@@ -58,7 +58,7 @@ class HomeViewModel: ViewModel() {
                     else -> _searchResultErrMsg.value = e.message ?: "Unknown error"
                 }
 
-                searchResultStatus.value = ApiStatus.NONE
+                searchResultStatus.value = ApiStatus.ERR
             }
         }
     }
