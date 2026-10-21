@@ -1,6 +1,8 @@
 package org.riza.iluvmusix.ui.screen.content.track
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,10 +60,15 @@ fun TrackDetailScreen(
     val viewModel: TrackDetailViewModel = viewModel()
 
     val trackDetail by viewModel.trackDetailResponse.collectAsState()
-    val trackErrMsg by viewModel.trackDetailErrMsg.collectAsState()
-    val trackStatus by viewModel.trackDetailStatus.collectAsState()
+    val iTunesSearch by viewModel.iTunesSearchTrackResponse.collectAsState()
 
-    val artistName = trackDetail?.artists?.joinToString(",") {it.name}
+    val trackErrMsg by viewModel.trackDetailErrMsg.collectAsState()
+    val iTunesSearchErrMsg by viewModel.iTunesSearchTrackErrMsg.collectAsState()
+
+    val trackStatus by viewModel.trackDetailStatus.collectAsState()
+    val iTunesSearchStatus by viewModel.iTunesSearchTrackStatus.collectAsState()
+
+    val artistName = trackDetail?.artists?.joinToString(", ") {it.name}
 
     var showModalArtists by remember { mutableStateOf(false) }
     LaunchedEffect(id, token) {
@@ -71,6 +78,11 @@ fun TrackDetailScreen(
                 token = "Bearer $token"
             )
         }
+    }
+
+    //LOGGER
+    LaunchedEffect(iTunesSearch) {
+        Log.d("ITUNES_RETURN", "data: $iTunesSearch \n\n errMsg: $iTunesSearchErrMsg \n\n status: $iTunesSearchStatus")
     }
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold { innerPadding ->
@@ -85,6 +97,17 @@ fun TrackDetailScreen(
                     )
                 }
                 ApiStatus.SUCCESS -> {
+                    LaunchedEffect(trackDetail) {
+                        trackDetail?.let {
+                            val artists = trackDetail?.artists?.joinToString(" ") {artist -> artist.name}
+                            viewModel.getItunesSearch("${it.name} $artists")
+                        }
+                    }
+                    LaunchedEffect(iTunesSearchErrMsg, iTunesSearchStatus) {
+                        iTunesSearchErrMsg?.let {
+                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     TrackDetailPart(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -100,7 +123,9 @@ fun TrackDetailScreen(
                         },
                         onAlbumClick = { id, title ->
                             navHostController.navigate(Screen.AlbumDetailScreen.withId(id))
-                        }
+                        },
+                        urlPreview = iTunesSearch?.results?.firstOrNull()?.previewUrl,
+                        iTunesStatus = iTunesSearchStatus
                     )
                 }
                 ApiStatus.ERR -> {
@@ -154,12 +179,16 @@ fun TrackDetailScreen(
                             contentAlignment = Alignment.CenterStart
                         ){
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp, horizontal = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 AsyncImage(
-                                    modifier = Modifier.size(48.dp).clip(CircleShape),
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .clip(CircleShape),
                                     model = it.images?.firstOrNull()?.url,
                                     contentDescription = null
                                 )

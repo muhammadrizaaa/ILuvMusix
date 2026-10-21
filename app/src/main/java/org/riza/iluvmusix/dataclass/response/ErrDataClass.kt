@@ -8,3 +8,7 @@ data class ErrData(
     val status: Int? = null,
     val message: String = ""
 )
+
+data class ITunesErrorResponse(
+    val errorMessage: String?
+)

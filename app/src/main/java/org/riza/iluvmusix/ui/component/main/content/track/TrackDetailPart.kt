@@ -21,7 +21,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.riza.iluvmusix.dataclass.response.main.content.track.TrackAlbumDto
 import org.riza.iluvmusix.helper.formatDuration
+import org.riza.iluvmusix.network.ApiStatus
 import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
+import org.riza.iluvmusix.ui.component.main.content.util.PreviewPlayerButton
+import org.riza.iluvmusix.ui.component.state.loading.LoadingBox
 
 @Composable
 fun TrackDetailPart(
@@ -31,6 +34,8 @@ fun TrackDetailPart(
     isExplicit: Boolean?,
     durationMs: Long?,
     artists: String?,
+    urlPreview: String?,
+    iTunesStatus: ApiStatus,
     onArtistClick: () -> Unit,
     onAlbumClick: (id: String, title: String) -> Unit,
 ){
@@ -50,24 +55,35 @@ fun TrackDetailPart(
                 AsyncImage(
                     model = cover,
                     contentDescription = null,
-                    modifier = Modifier.size(300.dp).clip(RoundedCornerShape(8.dp)),
+                    modifier = Modifier
+                        .size(300.dp)
+                        .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable(onClick = {onAlbumClick(album?.id?:"", album?.name?:"")}),
+                            .clickable(onClick = {
+                                onAlbumClick(
+                                    album?.id ?: "",
+                                    album?.name ?: ""
+                                )
+                            }),
                         text = title?: "Unknown",
                         style = MaterialTheme.typography.titleLarge.copy(
                             textAlign = TextAlign.Start
@@ -76,7 +92,7 @@ fun TrackDetailPart(
                     Text(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable(onClick = {onArtistClick()}),
+                            .clickable(onClick = { onArtistClick() }),
                         text = artists ?: "Unknown",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             textAlign = TextAlign.Start
@@ -91,6 +107,28 @@ fun TrackDetailPart(
                 }
                 if(isExplicit == true){
                     ExplicitBox()
+                }
+            }
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
+                when(iTunesStatus){
+                    ApiStatus.NONE, ApiStatus.LOADING -> {
+                        LoadingBox(
+                            size = 64.dp
+                        )
+                    }
+                    ApiStatus.SUCCESS -> {
+                        urlPreview?.let {
+                            PreviewPlayerButton(
+                                previewUrl = it,
+                            )
+                        }
+                    }
+                    ApiStatus.ERR -> {
+
+                    }
                 }
             }
         }
