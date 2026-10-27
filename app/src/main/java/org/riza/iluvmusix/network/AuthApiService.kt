@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.riza.iluvmusix.BuildConfig
 import org.riza.iluvmusix.dataclass.response.auth.TokenResponse
 import org.riza.iluvmusix.dataclass.response.main.ArtistDto
 import org.riza.iluvmusix.dataclass.response.main.PageResponse
@@ -25,8 +26,8 @@ import retrofit2.http.Query
 
 const val BASE_URL = "https://accounts.spotify.com/"
 const val BASE_URL_1 = "https://api.spotify.com/v1/"
-const val CLIENT_ID = "dceffae25edc45dfa77ccbe71d128bbc"
-const val CLIENT_SECRET = "e792a7dcbdb64e019b27b3430e198adf"
+const val CLIENT_ID = BuildConfig.CLIENT_ID
+const val CLIENT_SECRET = BuildConfig.CLIENT_SECRET
 fun getBasicAuthHeader(clientId: String, clientSecret: String): String {
     val rawString = "$clientId:$clientSecret"
     val base64String = Base64.encodeToString(rawString.toByteArray(), Base64.NO_WRAP)

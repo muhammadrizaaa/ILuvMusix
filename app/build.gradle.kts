@@ -1,8 +1,21 @@
+import java.util.Properties
+import kotlin.apply
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+val localProperties = Properties().apply {
+    val file = File(rootDir, "local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+val clientIdSpotify = localProperties.getProperty("CLIENT_ID")
+val clientSecretSpotify = localProperties.getProperty("CLIENT_SECRET")
 
 android {
     namespace = "org.riza.iluvmusix"
@@ -14,18 +27,31 @@ android {
         //noinspection OldTargetApi
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "demo v-1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        android.buildFeatures.buildConfig = true
         release {
-            isMinifyEnabled = false
+            resValue("string", "app_name", "I Luv Musix")
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "CLIENT_ID", "\"$clientIdSpotify\"")
+            buildConfigField("String", "CLIENT_SECRET", "\"$clientSecretSpotify\"")
+        }
+        debug {
+            resValue("string", "app_name", "musix-debug")
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            buildConfigField("String", "CLIENT_ID", "\"$clientIdSpotify\"")
+            buildConfigField("String", "CLIENT_SECRET", "\"$clientSecretSpotify\"")
         }
     }
     compileOptions {
