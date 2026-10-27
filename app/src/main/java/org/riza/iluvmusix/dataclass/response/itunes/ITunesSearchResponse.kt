@@ -7,5 +7,6 @@ data class ITunesSearchResponse(
 data class ITunesTrackDto(
     val trackName: String?,
     val artistName: String?,
+    val collectionName: String?,
     val previewUrl: String? // This is the 30-second .m4a audio file!
 )

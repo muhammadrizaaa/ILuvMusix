@@ -73,16 +73,41 @@ class TrackDetailViewModel: ViewModel() {
             }
         }
     }
-    fun getItunesSearch(title: String){
+    fun getItunesSearch(title: String, artist: String, album: String){
         viewModelScope.launch {
             iTunesSearchTrackStatus.value = ApiStatus.LOADING
             try {
                 val result = ITunesApi.iTunesService.getSongPreview(
-                    searchQuery = title,
+                    searchQuery = "$artist $title",
                 )
                 if(result.isSuccessful){
-                    _iTunesSearchTrackResponse.value = result.body()
-                    iTunesSearchTrackStatus.value = ApiStatus.SUCCESS
+                    val results = result.body()?.results
+                    if (!results.isNullOrEmpty()) {
+                        // Filter the results locally to find the EXACT track name match
+                        val exactMatch = results.find { track ->
+                            val isTrackMatch = track.trackName?.equals(title, ignoreCase = true) == true
+                            val isCollectionMatch = track.collectionName?.contains(album, ignoreCase = true) == true
+                            isTrackMatch && isCollectionMatch
+                        }
+
+                        // 2. Safe resolution
+                        val previewUrl = exactMatch?.previewUrl
+
+                        if (previewUrl != null) {
+                            Log.d("ITUNES", "Found exact match preview: $exactMatch $previewUrl")
+                            // playAudio(previewUrl)
+                            _iTunesSearchTrackResponse.value = ITunesSearchResponse(
+                                results = listOf(
+                                    exactMatch
+                                )
+                            )
+                            iTunesSearchTrackStatus.value = ApiStatus.SUCCESS
+                        } else {
+                            Log.e("ITUNES", "Song found, but no audio preview is available.")
+                            _iTunesSearchTrackResponse.value = null
+                            iTunesSearchTrackStatus.value = ApiStatus.ERR
+                        }
+                    }
                 }
                 else {
                     val error = Gson().fromJson(

@@ -100,7 +100,7 @@ fun TrackDetailScreen(
                     LaunchedEffect(trackDetail) {
                         trackDetail?.let {
                             val artists = trackDetail?.artists?.joinToString(" ") {artist -> artist.name}
-                            viewModel.getItunesSearch("${it.name} $artists")
+                            viewModel.getItunesSearch(it.name, artists?:"", it.album?.name?:"")
                         }
                     }
                     LaunchedEffect(iTunesSearchErrMsg, iTunesSearchStatus) {

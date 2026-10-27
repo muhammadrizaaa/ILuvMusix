@@ -32,8 +32,10 @@ interface ITunesApiService {
     @GET("search")
     suspend fun getSongPreview(
         @Query("term") searchQuery: String,
-        @Query("entity") entity: String = "song", // Forces it to only look for music tracks
-        @Query("limit") limit: Int = 1            // We only need the top result
+        @Query("entity") entity: String = "song",
+        @Query("limit") limit: Int = 25, // Increased to bypass karaoke covers
+        @Query("explicit") explicit: String = "Yes",
+        @Query("country") country: String = "GB" // Try "ID" or "GB"
     ): Response<ITunesSearchResponse>
 }
 
