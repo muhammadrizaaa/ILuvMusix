@@ -73,7 +73,7 @@ class TrackDetailViewModel: ViewModel() {
             }
         }
     }
-    fun getItunesSearch(title: String, artist: String, album: String){
+    fun getItunesSearch(title: String, artist: String){
         viewModelScope.launch {
             iTunesSearchTrackStatus.value = ApiStatus.LOADING
             try {
@@ -85,9 +85,21 @@ class TrackDetailViewModel: ViewModel() {
                     if (!results.isNullOrEmpty()) {
                         // Filter the results locally to find the EXACT track name match
                         val exactMatch = results.find { track ->
-                            val isTrackMatch = track.trackName?.equals(title, ignoreCase = true) == true
-                            val isCollectionMatch = track.collectionName?.contains(album, ignoreCase = true) == true
-                            isTrackMatch && isCollectionMatch
+                            val cleanApiTitle = track.trackName?.substringBefore("(")?.substringBefore("[")?.trim() ?: ""
+                            val cleanLocalTitle = title.substringBefore("(").substringBefore("[").trim()
+
+                            val isTrackMatch = cleanApiTitle.equals(cleanLocalTitle, ignoreCase = true) ||
+                                    cleanApiTitle.contains(cleanLocalTitle, ignoreCase = true) ||
+                                    cleanLocalTitle.contains(cleanApiTitle, ignoreCase = true)
+
+                            val cleanApiArtist = track.artistName ?: ""
+                            val isArtistMatch = cleanApiArtist.contains(artist, ignoreCase = true) ||
+                                    artist.contains(cleanApiArtist, ignoreCase = true)
+
+                            Log.d("ITUNES", "Compare Title: '$cleanApiTitle' vs '$cleanLocalTitle' -> Match: $isTrackMatch")
+                            Log.d("ITUNES", "Compare Artist: '$cleanApiArtist' vs '$artist' -> Match: $isArtistMatch")
+
+                            isTrackMatch && isArtistMatch
                         }
 
                         // 2. Safe resolution

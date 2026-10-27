@@ -15,10 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import org.riza.iluvmusix.R
 import org.riza.iluvmusix.dataclass.response.main.content.track.TrackAlbumDto
 import org.riza.iluvmusix.helper.formatDuration
 import org.riza.iluvmusix.network.ApiStatus
@@ -31,6 +36,9 @@ fun TrackDetailPart(
     modifier: Modifier = Modifier,
     album: TrackAlbumDto?,
     title: String?,
+    bgColor: Color,
+    isLightColor: Boolean,
+    imageRequest: ImageRequest,
     isExplicit: Boolean?,
     durationMs: Long?,
     artists: String?,
@@ -39,7 +47,7 @@ fun TrackDetailPart(
     onArtistClick: () -> Unit,
     onAlbumClick: (id: String, title: String) -> Unit,
 ){
-    val cover = album?.images?.firstOrNull()?.url
+    LocalContext.current
     Box(
         modifier = modifier
     ){
@@ -53,7 +61,7 @@ fun TrackDetailPart(
                 contentAlignment = Alignment.Center
             ){
                 AsyncImage(
-                    model = cover,
+                    model = imageRequest,
                     contentDescription = null,
                     modifier = Modifier
                         .size(300.dp)
@@ -106,7 +114,10 @@ fun TrackDetailPart(
                     )
                 }
                 if(isExplicit == true){
-                    ExplicitBox()
+                    ExplicitBox(
+                        bgColor = bgColor,
+                        contentColor = if(isLightColor) colorResource(R.color.black) else colorResource(R.color.black)
+                    )
                 }
             }
             Box(
@@ -123,6 +134,7 @@ fun TrackDetailPart(
                         urlPreview?.let {
                             PreviewPlayerButton(
                                 previewUrl = it,
+                                ringColor = bgColor
                             )
                         }
                     }

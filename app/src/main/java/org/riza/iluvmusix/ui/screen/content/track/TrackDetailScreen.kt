@@ -1,8 +1,16 @@
 package org.riza.iluvmusix.ui.screen.content.track
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,12 +40,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import org.riza.iluvmusix.datastore.AuthDataStore
+import org.riza.iluvmusix.helper.rememberPaletteImageRequest
 import org.riza.iluvmusix.navigation.Screen
 import org.riza.iluvmusix.network.ApiStatus
 import org.riza.iluvmusix.ui.component.main.content.track.TrackDetailPart
@@ -69,6 +84,57 @@ fun TrackDetailScreen(
     val iTunesSearchStatus by viewModel.iTunesSearchTrackStatus.collectAsState()
 
     val artistName = trackDetail?.artists?.joinToString(", ") {it.name}
+    val fallbackColor = MaterialTheme.colorScheme.primary
+    var glowColor by remember { mutableStateOf(fallbackColor) }
+    val infiniteTransition = rememberInfiniteTransition(label = "gradient_pulse")
+
+// Pulses smoothly back and forth between 0.7f and 1.0f over 3 seconds
+    val firstAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.7f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse // Plays forward, then backwards
+        ),
+        label = "firstAlpha"
+    )
+
+// Pulses between 0.3f and 0.6f over a slightly different duration (4 seconds)
+// to create an organic, unsynchronized feel
+    val secondAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 4000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "secondAlpha"
+    )
+
+    val isLightColor = glowColor.luminance() > 0.5f
+    val view = LocalView.current
+
+    // Dynamically flip the status bar icons to Dark/Light based on the album color
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as? Activity)?.window
+            if (window != null) {
+                // Ensure the status bar background itself is totally transparent
+                @Suppress("DEPRECATION")
+                window.statusBarColor = android.graphics.Color.TRANSPARENT
+                // Flip icons to dark if the color is bright, and light if the color is dark
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = isLightColor
+            }
+        }
+    }
+
+    // The massive block is now just one clean line!
+    val cover = trackDetail?.album?.images?.firstOrNull()?.url
+    val imageRequest = rememberPaletteImageRequest(
+        imageUrl = cover,
+        context = context,
+        onColorExtracted = { customColor -> glowColor = customColor }
+    )
 
     var showModalArtists by remember { mutableStateOf(false) }
     LaunchedEffect(id, token) {
@@ -88,7 +154,15 @@ fun TrackDetailScreen(
     Scaffold { innerPadding ->
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize().background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            glowColor.copy(alpha = firstAlpha),
+                            glowColor.copy(alpha = secondAlpha),
+                            Color.Transparent
+                        )
+                    )
+                )
         ) {
             when(trackStatus){
                 ApiStatus.LOADING, ApiStatus.NONE -> {
@@ -99,8 +173,8 @@ fun TrackDetailScreen(
                 ApiStatus.SUCCESS -> {
                     LaunchedEffect(trackDetail) {
                         trackDetail?.let {
-                            val artists = trackDetail?.artists?.joinToString(" ") {artist -> artist.name}
-                            viewModel.getItunesSearch(it.name, artists?:"", it.album?.name?:"")
+                            val artists = trackDetail?.artists?.firstOrNull()?.name
+                            viewModel.getItunesSearch(it.name, artists?:"")
                         }
                     }
                     LaunchedEffect(iTunesSearchErrMsg, iTunesSearchStatus) {
@@ -125,7 +199,10 @@ fun TrackDetailScreen(
                             navHostController.navigate(Screen.AlbumDetailScreen.withId(id))
                         },
                         urlPreview = iTunesSearch?.results?.firstOrNull()?.previewUrl,
-                        iTunesStatus = iTunesSearchStatus
+                        iTunesStatus = iTunesSearchStatus,
+                        imageRequest = imageRequest,
+                        bgColor = glowColor,
+                        isLightColor = isLightColor
                     )
                 }
                 ApiStatus.ERR -> {
