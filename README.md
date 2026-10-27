@@ -9,7 +9,7 @@ I Luv Musix is a premium, beautifully designed music discovery application built
 * **Inline Audio Previews**: Uses the iTunes Search API and Media3 (ExoPlayer) to stream 30-second high-quality audio previews directly within the album screen.
 * **Premium Typography**: Custom Material 3 typography implementation featuring **Space Grotesk** for punchy, editorial headers and a highly legible sans-serif for metadata.
 
-## 🛠Tech Stack
+## Tech Stack
 
 **Core UI & Architecture**
 * **Jetpack Compose**: 100% declarative UI toolkit.
