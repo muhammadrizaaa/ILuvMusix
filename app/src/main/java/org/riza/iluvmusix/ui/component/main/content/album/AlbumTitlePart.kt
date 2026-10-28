@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +56,7 @@ fun AlbumTitlePart(
     imageUrl: String?,
     artistsName: String,
     isSaved: Boolean,
+    onGlowColor: (Color) -> Unit,
     onArtistClick: () -> Unit,
     onSave: (Boolean) -> Unit,
     onBack: () -> Unit
@@ -111,6 +113,9 @@ fun AlbumTitlePart(
         context = context,
         onColorExtracted = { customColor -> glowColor = customColor }
     )
+    LaunchedEffect(glowColor) {
+        onGlowColor(glowColor)
+    }
     Box(
         modifier = Modifier
             .wrapContentHeight()
@@ -186,7 +191,7 @@ fun AlbumTitlePart(
                         else R.drawable.outline_bookmark_24
                     ),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = glowColor
 
                 )
             }

@@ -127,7 +127,9 @@ fun TrackDetailPart(
                 when(iTunesStatus){
                     ApiStatus.NONE, ApiStatus.LOADING -> {
                         LoadingBox(
-                            size = 64.dp
+                            size = 64.dp,
+                            color = bgColor,
+                            trackColor = colorResource(R.color.black)
                         )
                     }
                     ApiStatus.SUCCESS -> {

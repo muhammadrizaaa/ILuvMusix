@@ -13,7 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import org.riza.iluvmusix.R
 import org.riza.iluvmusix.dataclass.response.main.content.album.AlbumTrackDto
 import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
 
@@ -21,6 +25,7 @@ import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
 fun AlbumListTrackPart(
     modifier: Modifier = Modifier,
     data: List<AlbumTrackDto>,
+    glowColor: Color,
     onTrackClick: (id: String) -> Unit
 ){
     Column(
@@ -38,11 +43,12 @@ fun AlbumListTrackPart(
                 artists = artistName?:"",
                 index = index+1,
                 trackNumber = dto.trackNumber,
-                isExplicit = dto.explicit
+                isExplicit = dto.explicit,
+                glowColor = glowColor
             )
             if(index != data.size-1){
                 HorizontalDivider(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = glowColor,
                     thickness = 1.dp
                 )
             }
@@ -57,8 +63,10 @@ fun AlbumTrackItem(
     artists: String,
     index: Int,
     trackNumber: Int?,
-    isExplicit: Boolean?
+    isExplicit: Boolean?,
+    glowColor: Color
 ){
+    val isLightGlowColor = glowColor.luminance() > 0.5f
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -83,7 +91,10 @@ fun AlbumTrackItem(
             )
         }
         if(isExplicit == true){
-            ExplicitBox()
+            ExplicitBox(
+                contentColor = colorResource(if(isLightGlowColor) R.color.black else R.color.white),
+                bgColor = glowColor
+            )
         }
     }
 }

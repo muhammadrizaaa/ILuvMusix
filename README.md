@@ -37,3 +37,8 @@ This app creates a hybrid data experience by aggregating data from the best musi
 * Android Studio (Giraffe or newer recommended)
 * Minimum SDK: API 24 (Android 7.0)
 * Target SDK: API 34 (Android 14)
+
+
+## # V-1.1 Log
+* Update UI
+* add playlist getter from spotify (more platform is coming if possible)

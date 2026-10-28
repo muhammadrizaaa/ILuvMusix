@@ -73,7 +73,7 @@ class TrackDetailViewModel: ViewModel() {
             }
         }
     }
-    fun getItunesSearch(title: String, artist: String){
+    fun getItunesSearch(title: String, artist: String, collection: String){
         viewModelScope.launch {
             iTunesSearchTrackStatus.value = ApiStatus.LOADING
             try {
@@ -84,33 +84,63 @@ class TrackDetailViewModel: ViewModel() {
                     val results = result.body()?.results
                     if (!results.isNullOrEmpty()) {
                         // Filter the results locally to find the EXACT track name match
-                        val exactMatch = results.find { track ->
+                        val exactMatchWithCollection = results.find { track ->
                             val cleanApiTitle = track.trackName?.substringBefore("(")?.substringBefore("[")?.trim() ?: ""
                             val cleanLocalTitle = title.substringBefore("(").substringBefore("[").trim()
 
-                            val isTrackMatch = cleanApiTitle.equals(cleanLocalTitle, ignoreCase = true) ||
-                                    cleanApiTitle.contains(cleanLocalTitle, ignoreCase = true) ||
-                                    cleanLocalTitle.contains(cleanApiTitle, ignoreCase = true)
+                            val normApiTitle = cleanApiTitle.normalize()
+                            val normLocalTitle = cleanLocalTitle.normalize()
+
+                            val isTrackMatch = normApiTitle == normLocalTitle ||
+                                    normApiTitle.contains(normLocalTitle) ||
+                                    normLocalTitle.contains(normApiTitle)
 
                             val cleanApiArtist = track.artistName ?: ""
                             val isArtistMatch = cleanApiArtist.contains(artist, ignoreCase = true) ||
                                     artist.contains(cleanApiArtist, ignoreCase = true)
+                            val cleanApiCollection = track.collectionName ?: ""
+                            val isCollectionMatch = cleanApiCollection.contains(collection, ignoreCase = true) ||
+                                    collection.contains(cleanApiCollection, ignoreCase = true)
 
                             Log.d("ITUNES", "Compare Title: '$cleanApiTitle' vs '$cleanLocalTitle' -> Match: $isTrackMatch")
                             Log.d("ITUNES", "Compare Artist: '$cleanApiArtist' vs '$artist' -> Match: $isArtistMatch")
+
+                            isTrackMatch && isArtistMatch && isCollectionMatch
+                        }
+                        val exactMatch = results.find { track ->
+                            val cleanApiTitle = track.trackName?.substringBefore("(")?.substringBefore("[")?.trim() ?: ""
+                            val cleanLocalTitle = title.substringBefore("(").substringBefore("[").trim()
+
+                            // Normalize both strings to ignore commas, periods, and spacing differences
+                            val normApiTitle = cleanApiTitle.normalize()
+                            val normLocalTitle = cleanLocalTitle.normalize()
+
+                            val isTrackMatch = normApiTitle == normLocalTitle ||
+                                    normApiTitle.contains(normLocalTitle) ||
+                                    normLocalTitle.contains(normApiTitle)
+
+                            val cleanApiArtist = track.artistName ?: ""
+                            val normApiArtist = cleanApiArtist.normalize()
+                            val normLocalArtist = artist.normalize()
+
+                            val isArtistMatch = normApiArtist.contains(normLocalArtist) ||
+                                    normLocalArtist.contains(normApiArtist)
+
+                            Log.d("ITUNES", "Compare Title: '$normApiTitle' vs '$normLocalTitle' -> Match: $isTrackMatch")
+                            Log.d("ITUNES", "Compare Artist: '$normApiArtist' vs '$normLocalArtist' -> Match: $isArtistMatch")
 
                             isTrackMatch && isArtistMatch
                         }
 
                         // 2. Safe resolution
-                        val previewUrl = exactMatch?.previewUrl
+                        val previewUrl = exactMatchWithCollection?.previewUrl?: exactMatch?.previewUrl
 
                         if (previewUrl != null) {
                             Log.d("ITUNES", "Found exact match preview: $exactMatch $previewUrl")
                             // playAudio(previewUrl)
                             _iTunesSearchTrackResponse.value = ITunesSearchResponse(
                                 results = listOf(
-                                    exactMatch
+                                    exactMatchWithCollection?: exactMatch !!
                                 )
                             )
                             iTunesSearchTrackStatus.value = ApiStatus.SUCCESS
@@ -147,4 +177,9 @@ class TrackDetailViewModel: ViewModel() {
             }
         }
     }
+}
+
+fun String.normalize(): String {
+    return this.lowercase()
+        .replace(Regex("[^a-z0-9]"), "") // Keeps only letters and numbers
 }
