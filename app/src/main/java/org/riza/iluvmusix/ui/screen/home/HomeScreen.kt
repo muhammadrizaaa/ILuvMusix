@@ -86,7 +86,8 @@ fun HomeScreen(
                     SearchResult(
                         modifier = Modifier,
                         data = searchResult,
-                        onAlbumCLick = {
+                        searchQuery = q,
+                        onAlbumClick = {
                             navHostController.navigate(Screen.AlbumDetailScreen.withId(it))
                         },
                         onTrackClick = {

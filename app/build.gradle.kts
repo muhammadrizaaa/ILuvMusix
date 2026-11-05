@@ -14,8 +14,8 @@ val localProperties = Properties().apply {
     }
 }
 
-val clientIdSpotify = localProperties.getProperty("CLIENT_ID")
-val clientSecretSpotify = localProperties.getProperty("CLIENT_SECRET")
+val clientIdSpotify = localProperties.getProperty("CLIENT_ID")?:""
+val clientSecretSpotify = localProperties.getProperty("CLIENT_SECRET")?:""
 
 android {
     namespace = "org.riza.iluvmusix"
@@ -32,16 +32,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            // Uses your local machine's debug keystore automatically
+        }
+    }
+
     buildTypes {
         android.buildFeatures.buildConfig = true
         release {
             resValue("string", "app_name", "I Luv Musix")
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+//            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
             buildConfigField("String", "CLIENT_ID", "\"$clientIdSpotify\"")
             buildConfigField("String", "CLIENT_SECRET", "\"$clientSecretSpotify\"")
         }
