@@ -76,12 +76,15 @@ fun TrackDetailScreen(
 
     val trackDetail by viewModel.trackDetailResponse.collectAsState()
     val iTunesSearch by viewModel.iTunesSearchTrackResponse.collectAsState()
+    val deezerSearch by viewModel.deezerSearchTrackResponse.collectAsState()
 
     val trackErrMsg by viewModel.trackDetailErrMsg.collectAsState()
     val iTunesSearchErrMsg by viewModel.iTunesSearchTrackErrMsg.collectAsState()
+    val deezerSearchErrMsg by viewModel.deezerSearchTrackErrMsg.collectAsState()
 
     val trackStatus by viewModel.trackDetailStatus.collectAsState()
     val iTunesSearchStatus by viewModel.iTunesSearchTrackStatus.collectAsState()
+    val deezerSearchStatus by viewModel.deezerSearchTrackStatus.collectAsState()
 
     val artistName = trackDetail?.artists?.joinToString(", ") {it.name}
     val fallbackColor = MaterialTheme.colorScheme.primary
@@ -177,8 +180,21 @@ fun TrackDetailScreen(
                             viewModel.getItunesSearch(it.name, artists?:"", it.album?.name?:"")
                         }
                     }
+                    LaunchedEffect(iTunesSearch) {
+                        if(iTunesSearch?.results?.firstOrNull()?.previewUrl == null){
+                            trackDetail?.let {
+                                val artists = trackDetail?.artists?.firstOrNull()?.name
+                                viewModel.getDeezerSearch(it.name, artists?:"")
+                            }
+                        }
+                    }
                     LaunchedEffect(iTunesSearchErrMsg, iTunesSearchStatus) {
                         iTunesSearchErrMsg?.let {
+                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    LaunchedEffect(deezerSearchErrMsg, deezerSearchStatus) {
+                        deezerSearchErrMsg?.let {
                             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -198,8 +214,8 @@ fun TrackDetailScreen(
                         onAlbumClick = { id, title ->
                             navHostController.navigate(Screen.AlbumDetailScreen.withId(id))
                         },
-                        urlPreview = iTunesSearch?.results?.firstOrNull()?.previewUrl,
-                        iTunesStatus = iTunesSearchStatus,
+                        urlPreview = iTunesSearch?.results?.firstOrNull()?.previewUrl?: deezerSearch?.data?.firstOrNull()?.preview,
+                        previewIsLoading = iTunesSearchStatus == ApiStatus.LOADING || deezerSearchStatus == ApiStatus.LOADING,
                         imageRequest = imageRequest,
                         bgColor = glowColor,
                         isLightColor = isLightColor

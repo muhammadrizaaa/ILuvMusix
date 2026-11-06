@@ -35,7 +35,11 @@ fun getBasicAuthHeader(clientId: String, clientSecret: String): String {
 }
 val authHeader = getBasicAuthHeader(CLIENT_ID, CLIENT_SECRET)
 private val logging = HttpLoggingInterceptor().apply {
-    level = HttpLoggingInterceptor.Level.BODY
+    level = if (BuildConfig.DEBUG) {
+        HttpLoggingInterceptor.Level.BODY // Full details in Debug
+    } else {
+        HttpLoggingInterceptor.Level.NONE // Completely silent in Release
+    }
 }
 
 private val client = OkHttpClient.Builder()

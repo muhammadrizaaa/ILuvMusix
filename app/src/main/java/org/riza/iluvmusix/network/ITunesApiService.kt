@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.riza.iluvmusix.BuildConfig
 import org.riza.iluvmusix.dataclass.response.itunes.ITunesSearchResponse
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -13,7 +14,11 @@ import retrofit2.http.Query
 
 const val BASE_URL_I_TUNES = "https://itunes.apple.com/"
 private val logging = HttpLoggingInterceptor().apply {
-    level = HttpLoggingInterceptor.Level.BODY
+    level = if (BuildConfig.DEBUG) {
+        HttpLoggingInterceptor.Level.BODY // Full details in Debug
+    } else {
+        HttpLoggingInterceptor.Level.NONE // Completely silent in Release
+    }
 }
 
 private val client = OkHttpClient.Builder()

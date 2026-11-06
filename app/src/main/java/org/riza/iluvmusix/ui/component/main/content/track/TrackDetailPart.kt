@@ -26,7 +26,6 @@ import coil.request.ImageRequest
 import org.riza.iluvmusix.R
 import org.riza.iluvmusix.dataclass.response.main.content.track.TrackAlbumDto
 import org.riza.iluvmusix.helper.formatDuration
-import org.riza.iluvmusix.network.ApiStatus
 import org.riza.iluvmusix.ui.component.main.content.util.ExplicitBox
 import org.riza.iluvmusix.ui.component.main.content.util.PreviewPlayerButton
 import org.riza.iluvmusix.ui.component.state.loading.LoadingBox
@@ -43,7 +42,7 @@ fun TrackDetailPart(
     durationMs: Long?,
     artists: String?,
     urlPreview: String?,
-    iTunesStatus: ApiStatus,
+    previewIsLoading: Boolean,
     onArtistClick: () -> Unit,
     onAlbumClick: (id: String, title: String) -> Unit,
 ){
@@ -124,24 +123,19 @@ fun TrackDetailPart(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ){
-                when(iTunesStatus){
-                    ApiStatus.NONE, ApiStatus.LOADING -> {
-                        LoadingBox(
-                            size = 64.dp,
-                            color = bgColor,
-                            trackColor = colorResource(R.color.black)
+                if(previewIsLoading){
+                    LoadingBox(
+                        size = 64.dp,
+                        color = bgColor,
+                        trackColor = colorResource(R.color.black)
+                    )
+                }
+                else{
+                    urlPreview?.let {
+                        PreviewPlayerButton(
+                            previewUrl = it,
+                            ringColor = bgColor
                         )
-                    }
-                    ApiStatus.SUCCESS -> {
-                        urlPreview?.let {
-                            PreviewPlayerButton(
-                                previewUrl = it,
-                                ringColor = bgColor
-                            )
-                        }
-                    }
-                    ApiStatus.ERR -> {
-
                     }
                 }
             }
